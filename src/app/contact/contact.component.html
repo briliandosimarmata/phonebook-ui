@@ -1,0 +1,95 @@
+<div class="min-h-screen bg-gray-100 p-8">
+  <div class="max-w-screen-xl mx-auto space-y-8">
+    
+    <!-- Form to Add New Contact (Compact Form) -->
+    <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg p-8">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6">Add New Contact</h2>
+      
+      <form (submit)="onSubmit()" [formGroup]="contactForm" class="grid grid-cols-1 gap-6">
+        <!-- Name Input -->
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2" for="name">Name</label>
+          <input 
+            formControlName="name"
+            type="text" 
+            id="name" 
+            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400" 
+            placeholder="Enter contact name" required>
+        </div>
+        
+        <!-- Phone Number Input -->
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2" for="phoneNumber">Phone Number</label>
+          <input 
+            formControlName="phoneNumber"
+            type="text" 
+            id="phoneNumber" 
+            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400" 
+            placeholder="Enter phone number" required>
+        </div>
+
+        <!-- Avatar Upload -->
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2" for="avatar">Avatar</label>
+          <input 
+            formControlName="avatar"
+            type="file" 
+            id="avatar" 
+            (change)="onFileSelected($event)" 
+            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400">
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-right">
+          <button 
+            type="submit" 
+            class="w-full bg-indigo-600 text-white font-semibold py-3 px-6 rounded-md hover:bg-indigo-700">
+            Add Contact
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Table - List of Contacts (Wide Table) -->
+    <div class="bg-white shadow-lg rounded-lg p-8">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6">Contacts List</h2>
+      
+      <table class="min-w-full table-auto" style="width: 60rem;">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-6 py-3 text-left text-gray-600">Avatar</th>
+            <th class="px-6 py-3 text-left text-gray-600">Name</th>
+            <th class="px-6 py-3 text-left text-gray-600">Phone Number</th>
+            <th class="px-6 py-3 text-left text-gray-600">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let contact of contacts" class="border-b">
+            <td class="px-6 py-3">
+              <img 
+                *ngIf="contact.avatar" 
+                [src]="contact.avatar" 
+                alt="Avatar" 
+                class="w-12 h-12 rounded-full object-cover">
+              <span *ngIf="!contact.avatar" class="text-gray-500">No Avatar</span>
+            </td>
+            <td class="px-6 py-3">{{ contact.name }}</td>
+            <td class="px-6 py-3">{{ contact.phoneNumber }}</td>
+            <td class="px-6 py-3">
+              <button 
+                (click)="onDelete(contact)" 
+                class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <!-- Message if there are no contacts -->
+      <div *ngIf="contacts.length === 0" class="text-gray-500 mt-6">
+        No contacts added yet.
+      </div>
+    </div>
+  </div>
+</div>
