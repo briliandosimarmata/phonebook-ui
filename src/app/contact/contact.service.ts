@@ -24,11 +24,19 @@ export class ContactService {
   }
 
   deleteContact(id: string, version: number) {
-    return this.http.delete(`${this.baseUri}/${id}`, {
+    return lastValueFrom(this.http.delete(`${this.baseUri}/${id}`, {
       params: {
         version: version
       }
-    });
+    })).then(
+      () => {
+        return;
+      }
+    ).catch(
+      (err) => {
+        throw err;
+      }
+    );
   }
 
   getAllContact() {

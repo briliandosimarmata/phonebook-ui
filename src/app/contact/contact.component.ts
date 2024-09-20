@@ -10,7 +10,6 @@ import { Observable, Subscription } from 'rxjs';
   styleUrl: './contact.component.scss',
 })
 export class ContactComponent implements OnInit {
-  protected contacts: any[] = [];
   protected contactForm: FormGroup;
   protected $conctacts: Promise<any[]> | undefined;
 
@@ -59,7 +58,16 @@ export class ContactComponent implements OnInit {
   }
 
   protected onDelete(contact: any) {
-
+    this.service.deleteContact(contact.id, contact.version).
+      then(
+        () => {
+          this.doQueryAllContact();
+        }
+      ).catch(
+        (err) => {
+          console.log(err);
+        }
+      )
   }
 
   private doQueryAllContact() {

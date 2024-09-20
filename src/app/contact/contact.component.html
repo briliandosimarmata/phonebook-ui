@@ -91,7 +91,7 @@
       </table>
       
       <!-- Message if there are no contacts -->
-      <div *ngIf="contacts.length === 0" class="text-gray-500 mt-6">
+      <div *ngIf="($conctacts | async)" class="text-gray-500 mt-6">
         No contacts added yet.
       </div>
     </div>
