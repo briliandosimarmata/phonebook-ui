@@ -35,7 +35,7 @@
             formControlName="avatar"
             type="file" 
             id="avatar" 
-            (change)="onFileSelected($event)" 
+            (change)="onFileSelected($event.target)" 
             class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400">
         </div>
 
@@ -47,10 +47,14 @@
             Add Contact
           </button>
         </div>
+
+        <div>
+
+        </div>
       </form>
     </div>
 
-    <!-- Table - List of Contacts (Wide Table) -->
+    <!-- Table - List of Contacts -->
     <div class="bg-white shadow-lg rounded-lg p-8">
       <h2 class="text-3xl font-bold text-gray-800 mb-6">Contacts List</h2>
       
@@ -64,7 +68,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let contact of contacts" class="border-b">
+          <tr *ngFor="let contact of $conctacts | async" class="border-b">
             <td class="px-6 py-3">
               <img 
                 *ngIf="contact.avatar" 

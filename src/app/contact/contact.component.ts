@@ -1,40 +1,69 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ContactService } from './contact.service';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.scss',
 })
-export class ContactComponent {
+export class ContactComponent implements OnInit {
   protected contacts: any[] = [];
   protected contactForm: FormGroup;
+  protected $conctacts: Promise<any[]> | undefined;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private service: ContactService) {
     this.contactForm = fb.group(
       {
         name: null,
         phoneNumber: null,
         avatar: null
       }
-    )
+    );
+  }
+
+  ngOnInit(): void {
+    this.doQueryAllContact();
   }
 
 
   protected onSubmit() {
-    console.log(this.contactForm.value);
-    
+    let contact = {
+      name: this.contactForm.value.name,
+      phoneNumber: this.contactForm.value.phoneNumber,
+      avatar: ''
+    }
+
+    this.service.addContact(contact).subscribe(
+      {
+        next: (value) => {
+          this.doQueryAllContact();
+        },
+
+        error(err) {
+
+        },
+        complete() {
+
+        },
+      }
+    )
   }
 
   protected onFileSelected(target: any) {
     const files: FileList = target.files;
     console.log(files[0].arrayBuffer());
-    
+
   }
 
   protected onDelete(contact: any) {
 
+  }
+
+  private doQueryAllContact() {
+    this.$conctacts = this.service.getAllContact();
   }
 
 }
