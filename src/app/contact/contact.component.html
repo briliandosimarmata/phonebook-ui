@@ -1,49 +1,65 @@
+<!-- Notification Panel -->
+<div *ngIf="notification.message" class="absolute top-0 left-0 right-0 p-4" [ngClass]="{
+  'bg-green-500 text-white': notification.type === 'success',
+  'bg-red-500 text-white': notification.type === 'error'
+}">
+
+  <div class="container mx-auto flex justify-between items-center">
+    <!-- Notification Message -->
+    <span *ngIf="notification.type === 'success'">{{ notification.message }}</span>
+    <span *ngIf="notification.type === 'error'">{{ notification.code }} : {{ notification.message }}</span>
+    <!-- Close Button -->
+    <button (click)="closeNotification()" class="ml-4 text-white hover:text-gray-200">
+      &times;
+    </button>
+  </div>
+</div>
+
 <div class="min-h-screen bg-gray-100 p-8">
   <div class="max-w-screen-xl mx-auto space-y-8">
-    
+
     <!-- Form to Add New Contact (Compact Form) -->
     <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg p-8">
       <h2 class="text-3xl font-bold text-gray-800 mb-6">Add New Contact</h2>
-      
-      <form (submit)="onSubmit()" [formGroup]="contactForm" class="grid grid-cols-1 gap-6">
+
+      <form (submit)="onSubmit()" ([ngModel])="contact" [formGroup]="contactForm" class="grid grid-cols-1 gap-6">
         <!-- Name Input -->
         <div>
           <label class="block text-gray-700 font-semibold mb-2" for="name">Name</label>
-          <input 
-            formControlName="name"
-            type="text" 
-            id="name" 
-            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400" 
+          <input formControlName="name" type="text" id="name"
+            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
             placeholder="Enter contact name" required>
         </div>
-        
+
         <!-- Phone Number Input -->
         <div>
           <label class="block text-gray-700 font-semibold mb-2" for="phoneNumber">Phone Number</label>
-          <input 
-            formControlName="phoneNumber"
-            type="text" 
-            id="phoneNumber" 
-            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400" 
+          <input formControlName="phoneNumber" type="text" id="phoneNumber"
+            class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
             placeholder="Enter phone number" required>
         </div>
 
         <!-- Avatar Upload -->
         <div>
           <label class="block text-gray-700 font-semibold mb-2" for="avatar">Avatar</label>
-          <input 
-            formControlName="avatar"
-            type="file" 
-            id="avatar" 
-            (change)="onFileSelected($event.target)" 
+          <input formControlName="avatar" type="file" id="avatar" (change)="onFileSelected($event.target)"
             class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400">
         </div>
 
         <!-- Submit Button -->
-        <div class="text-right">
-          <button 
-            type="submit" 
-            class="w-full bg-indigo-600 text-white font-semibold py-3 px-6 rounded-md hover:bg-indigo-700">
+        <div class="flex justify-between">
+          <button *ngIf="contact" type="button" (click)="onEdit()"
+            class="bg-yellow-500 text-white font-semibold py-3 px-6 rounded-md hover:bg-yellow-600">
+            Edit Contact
+          </button>
+
+          <button *ngIf="contact" type="button" (click)="onCancel()"
+            class="bg-orange-500 text-white font-semibold py-3 px-6 rounded-md hover:bg-orange-600">
+            Cancel
+          </button>
+
+          <button *ngIf="!contact" type="submit"
+            class="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-md hover:bg-indigo-700">
             Add Contact
           </button>
         </div>
@@ -56,11 +72,21 @@
 
     <!-- Table - List of Contacts -->
     <div class="bg-white shadow-lg rounded-lg p-8">
-      <h2 class="text-3xl font-bold text-gray-800 mb-6">Contacts List</h2>
-      
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-gray-800">Contacts List</h2>
+
+        <!-- Search Input -->
+        <input 
+          type="text" 
+          (input)="filterContacts($event.target)" 
+          class="w-64 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400" 
+          placeholder="Search contacts...">
+      </div>
+
       <table class="min-w-full table-auto" style="width: 60rem;">
         <thead class="bg-gray-200">
           <tr>
+            <th class="px-6 py-3 text-left text-gray-600">Edit</th>
             <th class="px-6 py-3 text-left text-gray-600">Avatar</th>
             <th class="px-6 py-3 text-left text-gray-600">Name</th>
             <th class="px-6 py-3 text-left text-gray-600">Phone Number</th>
@@ -68,30 +94,30 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let contact of $conctacts | async" class="border-b">
+          <tr *ngFor="let contact of $contacts | async" class="border-b">
             <td class="px-6 py-3">
-              <img 
-                *ngIf="contact.avatar" 
-                [src]="contact.avatar" 
-                alt="Avatar" 
+              <button (click)="onGet(contact)" class="bg-green-500 text-black px-4 py-2 rounded-md hover:bg-green-600">
+                Edit
+              </button>
+            </td>
+            <td class="px-6 py-3">
+              <img *ngIf="contact.avatar" [src]="toSrcFile(contact.avatar)" alt="Avatar"
                 class="w-12 h-12 rounded-full object-cover">
               <span *ngIf="!contact.avatar" class="text-gray-500">No Avatar</span>
             </td>
             <td class="px-6 py-3">{{ contact.name }}</td>
             <td class="px-6 py-3">{{ contact.phoneNumber }}</td>
             <td class="px-6 py-3">
-              <button 
-                (click)="onDelete(contact)" 
-                class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+              <button (click)="onDelete(contact)" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
                 Delete
               </button>
             </td>
           </tr>
         </tbody>
       </table>
-      
+
       <!-- Message if there are no contacts -->
-      <div *ngIf="($conctacts | async)" class="text-gray-500 mt-6">
+      <div *ngIf="$contacts == undefined || ($contacts | async) == null" class="text-gray-500 mt-6">
         No contacts added yet.
       </div>
     </div>

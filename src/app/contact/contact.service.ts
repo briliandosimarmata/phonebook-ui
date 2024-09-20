@@ -12,11 +12,29 @@ export class ContactService {
   }
 
   addContact(contact: any) {
-    return this.http.post(`${this.baseUri}`, contact);
+    return lastValueFrom(this.http.post(`${this.baseUri}`, contact))
+      .then(
+        (res: any) => {
+          return res.data;
+        }
+      ).catch(
+        (err) => {
+          throw err;
+        }
+      )
   }
 
   editContact(contact: any) {
-    return this.http.put(`${this.baseUri}`, contact);
+    return lastValueFrom(this.http.put(`${this.baseUri}`, contact))
+      .then(
+        (res: any) => {
+          return res.data;
+        }
+      ).catch(
+        (err) => {
+          throw err;
+        }
+      )
   }
 
   getContact(id: string) {
