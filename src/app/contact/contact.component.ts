@@ -145,8 +145,13 @@ export class ContactComponent implements OnInit {
     let code;
 
     if (err instanceof HttpErrorResponse) {
-      message = err.error.message.message;
-      code = err.error.message.code;
+      if (err.error.message) {
+        message = err.error.message.message;
+        code = err.error.message.code;
+      } else {
+        message = err;
+        code = 'UNKNOWN'
+      }
     } else {
       message = err;
       code = 'UNKNOWN'
